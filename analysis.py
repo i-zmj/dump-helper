@@ -117,11 +117,19 @@ print("Output results >> " + final_file_path)
 # Write final file
 with open(final_file_path, 'w') as f1:
     for line in lines:
-        f1.write(line)
-        if line in symbol_task_list:
-            f1.write("*************************************************************************\n")
-            f1.write(symbol_task_list[line])
-            f1.write("*************************************************************************\n")
+
+        if "Found by" in line or "fp = " in line or "sp = " in line:
+            if "--details" in sys.argv :
+                f1.write(line + "\n")
+        else:
+            if line in symbol_task_list:
+                result = symbol_task_list[line].strip().split("\n")
+                f1.write(line + " | " + result[0] + "\n")
+                
+                for r in result[1:]:
+                    f1.write("        " + r + "\n")
+            else:
+                f1.write(line + "\n")
 
 # Print Done
 print("Done!")

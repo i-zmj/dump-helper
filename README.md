@@ -49,4 +49,5 @@ python3 analysis.py <dump_file_path> <lib_path>
 
 内部执行命令：
 - 使用minidump_stackwalk命令读取堆栈信息。
-- 使用addr2line命令解析堆栈信息。
+- 筛选信息中包含.lib和.so的内容。
+- 使用addr2line命令将.lib和.so和地址信息，转换成堆栈信息。
