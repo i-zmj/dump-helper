@@ -6,6 +6,7 @@ import os
 import subprocess
 import re
 import threading
+import configparser
 
 progressed_list_value = 0
 lock = threading.Lock()
@@ -35,11 +36,36 @@ if sys.version_info[0] < 3:
 
 # Read args
 if len(sys.argv) < 3:
-    print("Usage: python3 analysis.py <dump_file_path> <lib_path>")
-    sys.exit(1)
+    # If IniConfig file [cache.ini] exists and conf[lib_path] is available
+    if os.path.exists(".cache.ini"):
+        config = configparser.ConfigParser()
+        config.read(".cache.ini")
+        if "conf" in config and "lib_path" in config["conf"]:
+            lib_path = config["conf"]["lib_path"]
+            if lib_path[-1] != "/":
+                lib_path += "/"
+            print("Use lib_path from .cache.ini: " + lib_path)
+        else:
+            print("Read .cache.ini failed. [conf/lib_path] is NOT available!")
+            print("Please run script with <lib_path> again!")
+            sys.exit(1)
+
+    if len(sys.argv) < 2:
+        print("Usage: python3 analysis.py <dump_file_path> <lib_path>")
+        sys.exit(1)
+else:
+    lib_path = sys.argv[2]
+    config = configparser.ConfigParser()
+    config.read(".cache.ini")
+    # Create key and value
+    if "conf" not in config:
+        config["conf"] = {}
+    config["conf"]["lib_path"] = lib_path
+    with open(".cache.ini", "w") as configfile:
+        config.write(configfile)
+
 
 dump_file_path = sys.argv[1]
-lib_path = sys.argv[2]
 
 # Get absolute path
 dump_file_path = os.path.abspath(dump_file_path)
@@ -117,6 +143,8 @@ print("Output results >> " + final_file_path)
 thread_count = 0
 print_stack_count = 0
 
+print("============= Recent Stack =============")
+
 # Write final file
 with open(final_file_path, 'w') as f1:
     for line in lines:
@@ -127,7 +155,7 @@ with open(final_file_path, 'w') as f1:
         if ".so +" in line or ".lib +" in line:
             print_stack_count += 1
 
-        if "Found by" in line or "fp = " in line or "sp = " in line:
+        if "Found by " in line or "fp = 0x" in line or "sp = 0x" in line or "0 = 0x" in line or "2 = 0x" in line or "4 = 0x" in line or "6 = 0x" in line or "8 = 0x" in line or "pc = 0x" in line:
             if "--details" in sys.argv :
                 f1.write(line + "\n")
         else:
@@ -151,6 +179,8 @@ with open(final_file_path, 'w') as f1:
                 # Print some stacks on console
                 if thread_count == 1 and print_stack_count < 10:
                     print(line)
+
+print("============= Recent Stack =============")
 
 # Print Done
 print("Done!")
