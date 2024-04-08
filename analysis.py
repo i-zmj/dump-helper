@@ -20,7 +20,7 @@ def get_lines_with_index(lib_path, dict, start, end):
         lib_address = line.split("0x")[1].split(" ")[0].strip()
 
         # Run addr2line
-        ret = subprocess.run("addr2line -e " + line_lib_path + " -f -C -i " + lib_address, shell=True, stdout=subprocess.PIPE)
+        ret = subprocess.run("addr2line -e " + line_lib_path + " -f -C -p -i " + lib_address, shell=True, stdout=subprocess.PIPE)
         dict[line] = ret.stdout.decode('utf-8')
 
         # Update progressed_list_value
@@ -127,7 +127,7 @@ with open(final_file_path, 'w') as f1:
                 f1.write(line + " | " + result[0] + "\n")
                 
                 for r in result[1:]:
-                    f1.write("        " + r + "\n")
+                    f1.write("    " + r + "\n")
             else:
                 f1.write(line + "\n")
 
