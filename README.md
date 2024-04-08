@@ -51,3 +51,12 @@ python3 analysis.py <dump_file_path> <lib_path>
 - 使用minidump_stackwalk命令读取堆栈信息。
 - 筛选信息中包含.lib和.so的内容。
 - 使用addr2line命令将.lib和.so和地址信息，转换成堆栈信息。
+
+## 其他参数
+
+- --details: 输出完整的minidump_stackwalk命令执行结果。
+
+## 待开发
+
+- 每次转换地址，需要重新运行addr2line，非常比较耗时。可以改成交互式的输入输出来改善速度
+- 支持windows平台
