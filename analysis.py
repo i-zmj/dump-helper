@@ -7,6 +7,7 @@ import subprocess
 import re
 import threading
 import configparser
+import time
 
 progressed_list_value = 0
 lock = threading.Lock()
@@ -92,13 +93,18 @@ if subprocess.run(["which", "minidump_stackwalk"], stdout=subprocess.PIPE, stder
     sys.exit(1)
 
 # Add txt extension to dump file
-final_file_path = dump_file_path + ".txt"
+brief_file_path = dump_file_path + ".txt"
+full_file_path = dump_file_path + ".full.txt"
 
 symbol_task_list = {}
 
 # Run minidump_stackwalk
-print("Run minidump_stackwalk...")
+print("Run minidump_stackwalk...", end='')
+
+pre_run_time = time.time()
 ret = subprocess.run("minidump_stackwalk " + dump_file_path + " " + lib_path, shell=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+print("Done! (" + str(round(time.time() - pre_run_time, 2)) + "s)")
+
 lines = ret.stdout.decode('utf-8').split("\n")
 
 # Find the line that contains the lib name and address
@@ -123,6 +129,7 @@ num_tasks = 8
 split_size = int(len(symbol_task_list) / num_tasks) + 1
 threads = []
 
+pre_run_time = time.time()
 print("Run addr2line with " + str(num_tasks) + " threads...")
 for i in range(num_tasks):
     start = i * split_size
@@ -138,7 +145,7 @@ for i in range(num_tasks):
 for t in threads:
     t.join()
 
-print("Output results >> " + final_file_path)
+print("Done! (" + str(round(time.time() - pre_run_time, 2)) + "s)")
 
 thread_count = 0
 print_stack_count = 0
@@ -146,41 +153,51 @@ print_stack_count = 0
 print("============= Recent Stack =============")
 
 # Write final file
-with open(final_file_path, 'w') as f1:
-    for line in lines:
+with open(brief_file_path, 'w') as brief_file:
 
-        if "Thread" in line:
-            thread_count += 1
+    with open(full_file_path, 'w') as full_file:
 
-        if ".so +" in line or ".lib +" in line:
-            print_stack_count += 1
+        for line in lines:
 
-        if "Found by " in line or "fp = 0x" in line or "sp = 0x" in line or "0 = 0x" in line or "2 = 0x" in line or "4 = 0x" in line or "6 = 0x" in line or "8 = 0x" in line or "pc = 0x" in line:
-            if "--details" in sys.argv :
-                f1.write(line + "\n")
-        else:
-            if line in symbol_task_list:
-                result = symbol_task_list[line].strip().split("\n")
-                f1.write(line + " | " + result[0] + "\n")
-                
-                # Print some stacks on console
-                if thread_count == 1 and print_stack_count < 10:
-                    print(line + " | " + result[0])
+            # Print first thread's stack(Mostly crashed thread)
+            if "Thread" in line:
+                thread_count += 1
 
-                for r in result[1:]:
-                    f1.write("    " + r + "\n")
+            if ".so +" in line or ".lib +" in line:
+                print_stack_count += 1
+
+            if "Found by " in line or "fp = 0x" in line or "sp = 0x" in line or "0 = 0x" in line or "2 = 0x" in line or "4 = 0x" in line or "6 = 0x" in line or "8 = 0x" in line or "pc = 0x" in line:
+                full_file.write(line + "\n")
+
+            else:
+                if line in symbol_task_list:
+                    result = symbol_task_list[line].strip().split("\n")
+                    
+                    brief_file.write(line + " | " + result[0] + "\n")
+                    full_file.write(line + " | " + result[0] + "\n")
+                    
+                    # Print some stacks on console
+                    if thread_count == 1 and print_stack_count < 10:
+                        print(line + " | " + result[0])
+
+                    for r in result[1:]:
+                        brief_file.write("    " + r + "\n")
+                        full_file.write("    " + r + "\n")
+
+                        # Print some stacks on console
+                        if thread_count == 1 and print_stack_count < 10:
+                            print("    " + r)
+                else:
+                    brief_file.write(line + "\n")
+                    full_file.write(line + "\n")
 
                     # Print some stacks on console
                     if thread_count == 1 and print_stack_count < 10:
-                        print("    " + r)
-            else:
-                f1.write(line + "\n")
-
-                # Print some stacks on console
-                if thread_count == 1 and print_stack_count < 10:
-                    print(line)
+                        print(line)
 
 print("============= Recent Stack =============")
+
+print("Output results >> " + brief_file_path)
 
 # Print Done
 print("Done!")
