@@ -114,9 +114,18 @@ for t in threads:
 
 print("Output results >> " + final_file_path)
 
+thread_count = 0
+print_stack_count = 0
+
 # Write final file
 with open(final_file_path, 'w') as f1:
     for line in lines:
+
+        if "Thread" in line:
+            thread_count += 1
+
+        if ".so +" in line or ".lib +" in line:
+            print_stack_count += 1
 
         if "Found by" in line or "fp = " in line or "sp = " in line:
             if "--details" in sys.argv :
@@ -126,10 +135,22 @@ with open(final_file_path, 'w') as f1:
                 result = symbol_task_list[line].strip().split("\n")
                 f1.write(line + " | " + result[0] + "\n")
                 
+                # Print some stacks on console
+                if thread_count == 1 and print_stack_count < 10:
+                    print(line + " | " + result[0])
+
                 for r in result[1:]:
                     f1.write("    " + r + "\n")
+
+                    # Print some stacks on console
+                    if thread_count == 1 and print_stack_count < 10:
+                        print("    " + r)
             else:
                 f1.write(line + "\n")
+
+                # Print some stacks on console
+                if thread_count == 1 and print_stack_count < 10:
+                    print(line)
 
 # Print Done
 print("Done!")
