@@ -29,6 +29,12 @@ sudo make install
 - breakpad: https://github.com/google/breakpad
 - lss: https://chromium.googlesource.com/linux-syscall-support/
 
+### 2. 使用内置预编译的结果
+
+- minidump-stackwalk和minidump-stackwalk.exe
+    * https://github.com/rust-minidump/rust-minidump.git
+    * Version 0.21.1 (2024-03-01)
+
 ### 2. 安装python3
 
 Ubuntu建议使用apt进行python的安装
