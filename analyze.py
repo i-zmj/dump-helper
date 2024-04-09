@@ -163,7 +163,7 @@ with open(brief_file_path, 'w') as brief_file:
             if ".so +" in line or ".lib +" in line:
                 print_stack_count += 1
 
-            if "Found by " in line or "fp = 0x" in line or "sp = 0x" in line or "0 = 0x" in line or "2 = 0x" in line or "4 = 0x" in line or "6 = 0x" in line or "8 = 0x" in line or "pc = 0x" in line:
+            if "Found by:" in line or "fp = 0x" in line or "sp = 0x" in line or "0 = 0x" in line or "2 = 0x" in line or "4 = 0x" in line or "6 = 0x" in line or "8 = 0x" in line or "pc = 0x" in line:
                 full_file.write(line + "\n")
 
             else:
