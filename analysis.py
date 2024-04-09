@@ -12,25 +12,33 @@ import time
 progressed_list_value = 0
 lock = threading.Lock()
 
-def get_lines_with_index(lib_path, dict, start, end):
-    key_list = list(dict.keys())
-    # Loop dict from start to end
-    for i in range(start, end):
-        line = key_list[i]
-        words = re.findall(r'\blib\w+\.so\b', line)
-        line_lib_path = lib_path + words[0]
-        lib_address = line.split("0x")[1].split(" ")[0].strip()
+# minidump_stackwalk
+if sys.platform == "win32":
+    minidump_stackwalk_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "minidump-stackwalk.exe")
+else:
+    minidump_stackwalk_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "minidump-stackwalk")
 
-        # Run addr2line
-        ret = subprocess.run("addr2line -e " + line_lib_path + " -f -C -p -i " + lib_address, shell=True, stdout=subprocess.PIPE)
-        dict[line] = ret.stdout.decode('utf-8')
+# addr2line
+if sys.platform == "win32":
+    addr2line_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "addr2line.exe")
+else:
+    addr2line_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "addr2line")
 
-        # Update progressed_list_value
-        global progressed_list_value
+def get_lines_from_address(lib_path, dict, line):
+    words = re.findall(r'\blib\w+\.so\b', line)
+    line_lib_path = lib_path + words[0]
+    lib_address = line.split("0x")[1].split(" ")[0].strip()
 
-        with lock:
-            progressed_list_value += 1
-            print("Progressed: " + str(progressed_list_value) + "/" + str(len(dict)), end='\r')
+    # Run addr2line
+    ret = subprocess.run(addr2line_path + " -e " + line_lib_path + " -f -C -p -i " + lib_address, shell=True, stdout=subprocess.PIPE)
+    dict[line] = ret.stdout.decode('utf-8')
+
+    # Update progressed_list_value
+    global progressed_list_value
+
+    with lock:
+        progressed_list_value += 1
+        print("\rProgressed: " + str(progressed_list_value) + "/" + str(len(dict)), end='')
 
 if sys.version_info[0] < 3:
     print("This script should been run with python3")
@@ -86,15 +94,9 @@ if not os.path.exists(lib_path):
     print("Lib path not found")
     sys.exit(1)
 
-# Check command minidump_stackwalk
-if subprocess.run(["which", "minidump_stackwalk"], stdout=subprocess.PIPE, stderr=subprocess.PIPE).returncode != 0:
-    print("minidump_stackwalk not found")
-    print("Please build and install breakpad from https://gitee.com/girakoo/breadpad.git")
-    sys.exit(1)
-
 # Add txt extension to dump file
 brief_file_path = dump_file_path + ".txt"
-full_file_path = dump_file_path + ".full.txt"
+full_file_path = dump_file_path + ".full"
 
 symbol_task_list = {}
 
@@ -102,7 +104,7 @@ symbol_task_list = {}
 print("Run minidump_stackwalk...", end='')
 
 pre_run_time = time.time()
-ret = subprocess.run("minidump_stackwalk " + dump_file_path + " " + lib_path, shell=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+ret = subprocess.run(minidump_stackwalk_path + " " + dump_file_path + " " + lib_path, shell=True, stdout=subprocess.PIPE)
 print("Done! (" + str(round(time.time() - pre_run_time, 2)) + "s)")
 
 lines = ret.stdout.decode('utf-8').split("\n")
@@ -118,26 +120,21 @@ for line in lines:
 
             if os.path.exists(line_lib_path):
 
-                # Save line into dictionary
-                symbol_task_list[line] = "NONE"
+                if not line in symbol_task_list:
+                    # Save line into dictionary
+                    symbol_task_list[line] = "NONE"
 
 print("Found available " + str(len(symbol_task_list)) + " lines.")
 
 # Convert symbol task with multi thread
 # Create 8 threads
-num_tasks = 8
-split_size = int(len(symbol_task_list) / num_tasks) + 1
-threads = []
 
 pre_run_time = time.time()
-print("Run addr2line with " + str(num_tasks) + " threads...")
-for i in range(num_tasks):
-    start = i * split_size
-    end = (i + 1) * split_size
-    if i == num_tasks - 1:
-        end = len(symbol_task_list)
-        
-    t = threading.Thread(target=get_lines_with_index, args=(lib_path, symbol_task_list, start, end))
+
+# Multithread
+threads = []
+for task in symbol_task_list:
+    t = threading.Thread(target=get_lines_from_address, args=(lib_path, symbol_task_list, task))
     threads.append(t)
     t.start()
     
@@ -145,7 +142,7 @@ for i in range(num_tasks):
 for t in threads:
     t.join()
 
-print("Done! (" + str(round(time.time() - pre_run_time, 2)) + "s)")
+print("\nDone! (" + str(round(time.time() - pre_run_time, 2)) + "s)")
 
 thread_count = 0
 print_stack_count = 0
