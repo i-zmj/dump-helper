@@ -14,15 +14,15 @@ lock = threading.Lock()
 
 # minidump_stackwalk
 if sys.platform == "win32":
-    minidump_stackwalk_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "minidump-stackwalk.exe")
+    minidump_stackwalk_path = os.path.join(os.getcwd(), "minidump-stackwalk.exe")
 else:
-    minidump_stackwalk_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "minidump-stackwalk")
+    minidump_stackwalk_path = os.path.join(os.getcwd(), "minidump-stackwalk")
 
 # addr2line
 if sys.platform == "win32":
-    addr2line_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "addr2line.exe")
+    addr2line_path = os.path.join(os.getcwd(), "addr2line.exe")
 else:
-    addr2line_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "addr2line")
+    addr2line_path = os.path.join(os.getcwd(), "addr2line")
 
 def get_lines_from_address(lib_path, dict, line):
     words = re.findall(r'\blib\w+\.so\b', line)
