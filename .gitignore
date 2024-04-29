@@ -1,6 +1,11 @@
 /.*
+/build
+/dist
 *.so
 *.lib
 *.dmp
 *.full
 *.txt
+*.spec
+*.stack
+*.sym
