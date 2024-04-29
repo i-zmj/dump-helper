@@ -25,29 +25,9 @@ def stack_walk(dump_path):
         return
 
     # stack walk
-    stack_walk_cmd = f"{stackwalk_path} {dump_path} {work_dir}\\symbols > {dump_path}.stack"
+    stack_walk_cmd = f"{stackwalk_path} {dump_path} {work_dir}\\symbols --dump > {dump_path}.full.stack"
     print(stack_walk_cmd)
     subprocess.run(stack_walk_cmd, shell=True)
-
-    print("\n============= Recent Stack =============")
-
-    # read stack
-    with open(f"{dump_path}.stack", "r") as f:
-        lines = f.readlines()
-        if len(lines) < 2:
-            print("stack walk failed")
-            return
-        
-        print_lines = 20
-
-        # print 20 lines
-        for line in lines:
-            line = line.strip()
-            if ".so" in line or ".lib" in line or "Thread" in line or "Crash" in line:
-                print(line)
-                print_lines -= 1
-                if print_lines == 0:
-                    break
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
