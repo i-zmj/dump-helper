@@ -14,7 +14,7 @@ work_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 print("********************************************************")
 print("* Project: https://gitee.com/izmj/dump_helper          *")
-print("* Current Version: v2.1                                *")
+print("* Current Version: v2.2                                *")
 print("********************************************************")
 
 dump_syms_path = os.path.join(work_dir, "third-party", f"dump_syms{exec_postfix}")
@@ -29,7 +29,7 @@ def dump_syms(so_path):
         return
 
     # dump symbols
-    so_target_path = os.path.join(f"{work_dir}\\symbols", os.path.basename(so_path))
+    so_target_path = os.path.join(work_dir, "symbols", os.path.basename(so_path))
     if not os.path.exists(so_target_path):
         print(f"create directory: {so_target_path}")
         os.makedirs(so_target_path)
@@ -50,7 +50,7 @@ def dump_syms(so_path):
         print("=====================================")
 
     # move symbols to symbols folder
-    symbols_folder = os.path.join(f"{work_dir}\\symbols", os.path.basename(so_path), id)
+    symbols_folder = os.path.join(work_dir, "symbols", os.path.basename(so_path), id)
     if not os.path.exists(symbols_folder):
         os.makedirs(symbols_folder)
 

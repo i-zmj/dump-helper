@@ -14,7 +14,7 @@ work_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 print("********************************************************")
 print("* Project: https://gitee.com/izmj/dump_helper          *")
-print("* Current Version: v2.1                                *")
+print("* Current Version: v2.2                                *")
 print("********************************************************")
 
 stackwalk_path = os.path.join(work_dir, "third-party", f"minidump-stackwalk{exec_postfix}")
@@ -29,7 +29,8 @@ def stack_walk(dump_path):
         return
 
     # stack walk
-    stack_walk_cmd = f"{stackwalk_path} {dump_path} {work_dir}\\symbols > {dump_path}.stack"
+    symbol_path = os.path.join(work_dir, "symbols");
+    stack_walk_cmd = f"{stackwalk_path} {dump_path} {symbol_path} > {dump_path}.stack"
     print(stack_walk_cmd)
     subprocess.run(stack_walk_cmd, shell=True)
 
