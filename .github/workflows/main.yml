@@ -1,0 +1,32 @@
+name: Build Python Script
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build Executable
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+
+    - name: Build executable
+      run: |
+        pyinstaller --onefile dump_syms.py
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: Executable
+        path: dist/*
