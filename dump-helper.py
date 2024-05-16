@@ -70,7 +70,6 @@ def dump_syms(so_path):
     # dump symbols
     so_target_path = os.path.join(work_dir, "symbols", os.path.basename(so_path))
     if not os.path.exists(so_target_path):
-        print(f"create directory: {so_target_path}")
         os.makedirs(so_target_path)
 
     dump_syms_cmd = f"{dump_syms_path} {so_path} > {so_target_path}.sym"
@@ -84,7 +83,6 @@ def dump_syms(so_path):
             colorful_print('error', "dump symbols failed")
             return
         id = lines[0].split()[3]
-        colorful_print('info', "********************** Symbol ID ***********************")
         colorful_print('info', f"symbol id: {id}\n")
 
     # move symbols to symbols folder
@@ -112,7 +110,7 @@ def stack_walk(dump_path):
     stack_walk_cmd = f"{stackwalk_path} {dump_path} {symbol_path} --dump > {dump_path}.raw"
     subprocess.run(stack_walk_cmd, shell=True)
 
-    colorful_print('debug', "\n********************* Recent Stack *********************")
+    colorful_print('info', "********************* Recent Stack *********************")
 
     # read stack
     with open(f"{dump_path}.stack", "r") as f:
@@ -132,7 +130,7 @@ def stack_walk(dump_path):
                 if print_lines == 0:
                     break
 
-    colorful_print('debug', "********************************************************")
+    colorful_print('info', "********************************************************")
 
 if __name__ == "__main__":
 
@@ -157,7 +155,8 @@ if __name__ == "__main__":
         # Fix param that endsWith space
         so_path = so_path.strip()
         if so_path.endswith(".so") or so_path.endswith(".dll") or so_path.endswith(".lib"):
-            colorful_print("info", f"Processing library {so_path}...")
+            colorful_print('info', "********************* Dump Symbol **********************")
+            colorful_print("debug", f"Processing library {so_path}...")
             dump_syms(so_path)
 
     # Parse dump files
@@ -165,7 +164,8 @@ if __name__ == "__main__":
         # Fix param that endsWith space
         dump_path = dump_path.strip()
         if dump_path.endswith(".dmp") or dump_path.endswith(".minidump"):
-            colorful_print("info", f"Processing dump file {dump_path}...")
+            colorful_print('info', "********************** Stack Walk **********************")
+            colorful_print("debug", f"Processing dump file {dump_path}...")
             stack_walk(dump_path)
 
     # pause
