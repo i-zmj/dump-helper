@@ -26,7 +26,7 @@ work_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 print("********************************************************")
 print("* Project: https://gitee.com/izmj/dump_helper          *")
-print("* Current Version: v2.2                                *")
+print("* Current Version: v2.3                                *")
 print("********************************************************")
 
 # Check dump_syms
