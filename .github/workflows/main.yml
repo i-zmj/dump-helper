@@ -28,7 +28,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: dump-helper-x86_64-linux.tar.xz
+        name: dump-helper-x86_64-linux
         path: dist/*
 
   build_windows:
@@ -55,7 +55,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: dump-helper-x86_64-windows.zip
+        name: dump-helper-x86_64-windows.exe
         path: dist/*
 
   build_mac:
@@ -82,5 +82,5 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: dump-helper-x86_64-apple-darwin.tar.xz
+        name: dump-helper-x86_64-apple-darwin
         path: dist/*
