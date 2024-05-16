@@ -55,7 +55,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: dump-helper-x86_64-windows.exe
+        name: dump-helper-x86_64-windows
         path: dist/*
 
   build_mac:
