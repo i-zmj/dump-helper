@@ -6,6 +6,5 @@
 *.dmp
 *.raw
 *.txt
-*.spec
 *.stack
 *.sym

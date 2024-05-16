@@ -7,8 +7,20 @@ import subprocess
 
 if sys.platform == "win32":
     exec_postfix = ".exe" 
-else: 
+elif sys.platform == "linux":
     exec_postfix = ""
+elif sys.platform == "darwin":
+    exec_postfix = ""
+else:
+    print(f"Unsupported platform: {sys.platform}")
+    exit(1)
+
+def get_resource_path(relative_path):
+    if getattr(sys, 'frozen', False):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 work_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
 
@@ -18,14 +30,14 @@ print("* Current Version: v2.2                                *")
 print("********************************************************")
 
 # Check dump_syms
-dump_syms_path = os.path.join(work_dir, f"dump_syms{exec_postfix}")
+dump_syms_path = get_resource_path(os.path.join("res", f"dump_syms{exec_postfix}"))
 if not os.path.exists(dump_syms_path):
     print(f"\n>>>> ERROR: Tools [{dump_syms_path}] not exists!\n")
     input("Press Enter to exit...")
     exit(1)
 
 # Check stackwalk
-stackwalk_path = os.path.join(work_dir, f"minidump-stackwalk{exec_postfix}")
+stackwalk_path = get_resource_path(os.path.join("res" , f"minidump-stackwalk{exec_postfix}"))
 if not os.path.exists(stackwalk_path):
     print(f"\n>>>> ERROR: Tools [{stackwalk_path}] not exists!\n")
     input("Press Enter to exit...")
@@ -78,11 +90,11 @@ def stack_walk(dump_path):
     # stack walk
     symbol_path = os.path.join(work_dir, "symbols");
     stack_walk_cmd = f"{stackwalk_path} {dump_path} {symbol_path} > {dump_path}.stack"
-    print(stack_walk_cmd)
+    print("Generate stack info for human...")
     subprocess.run(stack_walk_cmd, shell=True)
 
     stack_walk_cmd = f"{stackwalk_path} {dump_path} {symbol_path} --dump > {dump_path}.raw"
-    print(stack_walk_cmd)
+    print("Generate stack info for machine...")
     subprocess.run(stack_walk_cmd, shell=True)
 
     print("\n============= Recent Stack =============")
