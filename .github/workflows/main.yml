@@ -14,7 +14,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3'
+        python-version: '3.x'
 
     - name: Install dependencies
       run: |
@@ -29,8 +29,8 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: dump-helper-x86_64-windows.zip
-        path: dist/*
+        name: dump-helper-x86_64-linux.zip
+        path: .\dist\*
 
   build_windows:
     name: Build Executable for Windows
@@ -42,7 +42,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x' # 指定具体的Python 3版本，如3.8或3.9
+        python-version: '3.x'
 
     - name: Install dependencies
       run: |
@@ -52,12 +52,13 @@ jobs:
     - name: Build executable
       run: |
         pyinstaller --onefile dump-helper.py
-        cp third-party/x86_64/win32/* dist/
+        xcopy .\third-party\x86_64\win32\* .\dist\
+
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: dump-helper-x86_64-linux.tar.xz
+        name: dump-helper-x86_64-windows.zip
         path: dist/*
 
   build_mac:
@@ -70,7 +71,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x' # 指定具体的Python 3版本，如3.8或3.9
+        python-version: '3.x'
 
     - name: Install dependencies
       run: |
