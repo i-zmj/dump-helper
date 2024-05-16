@@ -25,11 +25,15 @@ jobs:
       run: |
         pyinstaller dump-helper.linux.spec
 
+    - name: Create tar.xz archive
+      run: |
+        tar -cJf dump-helper-x86_64-linux.tar.xz -C dist/ .
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: dump-helper-x86_64-linux
-        path: dist/*
+        name: dump-helper-x86_64-linux.tar.xz
+        path: dump-helper-x86_64-linux.tar.xz
 
   build_windows:
     name: Build Executable for Windows
@@ -79,8 +83,12 @@ jobs:
       run: |
         pyinstaller dump-helper.darwin.spec
 
+    - name: Create tar.xz archive
+      run: |
+        tar -cJf dump-helper-x86_64-apple-darwin.tar.xz -C dist/ .
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: dump-helper-x86_64-apple-darwin
-        path: dist/*
+        name: dump-helper-x86_64-apple-darwin.tar.xz
+        path: dump-helper-x86_64-apple-darwin.tar.xz
