@@ -26,11 +26,15 @@ jobs:
         pyinstaller --onefile dump-helper.py
         cp third-party/x86_64/linux/* dist/
 
+    - name: Create tar.xz archive
+      run: |
+        tar -cJf dump-helper-x86_64-linux.tar.xz -C dist/ .
+
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: dump-helper-x86_64-linux.zip
-        path: dist/*
+        name: dump-helper-x86_64-linux.tar.xz
+        path: dump-helper-x86_64-linux.tar.xz
 
   build_windows:
     name: Build Executable for Windows
@@ -83,8 +87,12 @@ jobs:
         pyinstaller --onefile dump-helper.py
         cp third-party/x86_64/darwin/* dist/
 
+    - name: Create tar.xz archive
+      run: |
+        tar -cJf dump-helper-x86_64-apple-darwin.tar.xz -C dist/ .
+
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
         name: dump-helper-x86_64-apple-darwin.tar.xz
-        path: dist/*
+        path: dump-helper-x86_64-apple-darwin.tar.xz
