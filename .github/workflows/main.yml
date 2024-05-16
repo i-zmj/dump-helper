@@ -24,7 +24,7 @@ jobs:
     - name: Build executable
       run: |
         pyinstaller --onefile dump-helper.py
-        cp third-party/x86_64/linux/* dist/ -rf
+        cp third-party/x86_64/linux/* dist/
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
@@ -52,7 +52,7 @@ jobs:
     - name: Build executable
       run: |
         pyinstaller --onefile dump-helper.py
-        cp third-party/x86_64/win32/* dist/ -rf
+        cp third-party/x86_64/win32/* dist/
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
@@ -80,7 +80,7 @@ jobs:
     - name: Build executable
       run: |
         pyinstaller --onefile dump-helper.py
-        cp third-party/x86_64/darwin/* dist/ -rf
+        cp third-party/x86_64/darwin/* dist/
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
