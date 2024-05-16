@@ -52,7 +52,7 @@ jobs:
     - name: Build executable
       run: |
         pyinstaller --onefile dump-helper.py
-        cp third-party/x86_64/linux/* dist/
+        cp third-party/x86_64/win32/* dist/
 
 
     - name: Upload artifact
