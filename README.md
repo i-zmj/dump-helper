@@ -14,7 +14,7 @@
    a. dump-helper将优先解析so文件，生成sym文件。
    b. dump-helper将解析dmp文件，生成.stack和.raw文件。
 
-## V2.3 特性
+## 特性
 
 - 合并dump_syms和minidump_stackwalk，可根据文件后缀识别该如何处理文件。
 

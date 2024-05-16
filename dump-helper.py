@@ -154,12 +154,16 @@ if __name__ == "__main__":
 
     # Parse libraries
     for so_path in args:
+        # Fix param that endsWith space
+        so_path = so_path.strip()
         if so_path.endswith(".so") or so_path.endswith(".dll") or so_path.endswith(".lib"):
             colorful_print("info", f"Processing library {so_path}...")
             dump_syms(so_path)
 
     # Parse dump files
     for dump_path in args:
+        # Fix param that endsWith space
+        dump_path = dump_path.strip()
         if dump_path.endswith(".dmp") or dump_path.endswith(".minidump"):
             colorful_print("info", f"Processing dump file {dump_path}...")
             stack_walk(dump_path)
