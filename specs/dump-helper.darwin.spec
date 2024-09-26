@@ -5,7 +5,7 @@ a = Analysis(
     ['../dump-helper.py'],
     pathex=[],
     binaries=[],
-    datas=[('../third-party/x86_64/darwin/', 'res/')\],
+    datas=[('../third-party/x86_64/darwin/', 'res/')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
