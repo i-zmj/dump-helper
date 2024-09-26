@@ -23,7 +23,7 @@ jobs:
 
     - name: Build executable
       run: |
-        pyinstaller dump-helper.linux.spec
+        pyinstaller specs/dump-helper.linux.spec
 
     - name: Create tar.xz archive
       run: |
@@ -54,7 +54,7 @@ jobs:
 
     - name: Build executable
       run: |
-        pyinstaller dump-helper.win32.spec
+        pyinstaller specs/dump-helper.win32.spec
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -81,7 +81,7 @@ jobs:
 
     - name: Build executable
       run: |
-        pyinstaller dump-helper.darwin.spec
+        pyinstaller specs/dump-helper.darwin.spec
 
     - name: Create tar.xz archive
       run: |

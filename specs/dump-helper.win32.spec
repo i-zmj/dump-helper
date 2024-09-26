@@ -2,12 +2,10 @@
 
 
 a = Analysis(
-    ['dump-helper.py'],
+    ['../dump-helper.py'],
     pathex=[],
     binaries=[],
-    datas=[('./third-party/x86_64/darwin/', './res/'),
-        ('./img/zmj.ico', './img/zmj.ico')],
-
+    datas=[('../third-party/x86_64/win32/', 'res/')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -36,5 +34,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='./img/zmj.ico'
+    icon='../img/zmj.ico'
 )
