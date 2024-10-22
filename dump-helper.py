@@ -102,6 +102,10 @@ def stack_walk(dump_path):
         colorful_print('error', "dump file not exists: %s" % dump_path)
         return
 
+    if os.path.exists(dump_path + ".stack"):
+        colorful_print('warning', "stack walk already exists! skip.")
+        return
+
     # stack walk
     symbol_path = os.path.join(work_dir, "symbols");
     stack_walk_cmd = f"{stackwalk_path} {dump_path} {symbol_path} > {dump_path}.stack"
