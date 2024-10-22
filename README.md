@@ -13,6 +13,7 @@
 1. 将so，dmp文件直接拖拽到dump_helper上，即可解析。
    a. dump-helper将优先解析so文件，生成sym文件。
    b. dump-helper将解析dmp文件，生成.stack和.raw文件。
+2. 将一个目录直接拖拽到dump_helper上，会递归获取里面所有的文件。进行解析。
 
 ## 特性
 

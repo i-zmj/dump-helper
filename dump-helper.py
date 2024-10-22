@@ -150,6 +150,13 @@ if __name__ == "__main__":
         colorful_print("error", "No libraries or dump files input. Exit.")
         exit(1)
 
+    # If put a directory, get all files in it.
+    for dir_path in args:
+        if os.path.isdir(dir_path):
+            for root, dirs, files in os.walk(dir_path):
+                for file in files:
+                    args.append(os.path.join(root, file))
+
     # Parse libraries
     for so_path in args:
         # Fix param that endsWith space
