@@ -17,11 +17,9 @@ def colorful_print(level, msg):
         print(msg)
 
 colorful_print('info', "********************************************************")
-colorful_print('info', "* Project: https://gitee.com/izmj/dump_helper          *")
-colorful_print('info', "* Current Version: v2.3                                *")
+colorful_print('info', "* Project:   https://gitee.com/izmj/dump_helper        *")
+colorful_print('info', "* Version:   v2.5 (2024-12-24)                         *")
 colorful_print('info', "********************************************************")
-
-work_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 if sys.platform == "win32":
     exec_postfix = ".exe" 
@@ -38,6 +36,7 @@ else:
     exit(1)
 
 # If current script is not end with .py
+# It means current script is a pyinstaller bundle
 if not sys.argv[0].endswith(".py"):
     exec_path = 'res';
 
@@ -47,6 +46,9 @@ def get_resource_path(relative_path):
     else:
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
+
+work_dir = get_resource_path('.')
+symbol_dir = get_resource_path('.dump_helper_sym')
 
 # Check dump_syms
 dump_syms_path = get_resource_path(os.path.join(exec_path, f"dump_syms{exec_postfix}"))
@@ -68,7 +70,7 @@ def dump_syms(so_path):
         return
 
     # dump symbols
-    so_target_path = os.path.join(work_dir, "symbols", os.path.basename(so_path))
+    so_target_path = os.path.join(symbol_dir, os.path.basename(so_path))
     if not os.path.exists(so_target_path):
         os.makedirs(so_target_path)
 
@@ -86,7 +88,7 @@ def dump_syms(so_path):
         colorful_print('info', f"symbol id: {id}\n")
 
     # move symbols to symbols folder
-    symbols_folder = os.path.join(work_dir, "symbols", os.path.basename(so_path), id)
+    symbols_folder = os.path.join(symbol_dir, os.path.basename(so_path), id)
     if not os.path.exists(symbols_folder):
         os.makedirs(symbols_folder)
 
@@ -102,16 +104,16 @@ def stack_walk(dump_path):
         colorful_print('error', "dump file not exists: %s" % dump_path)
         return
 
-    if os.path.exists(dump_path + ".stack"):
-        colorful_print('warning', "stack walk already exists! skip.")
-        return
+    # check if stack walk already exists, skip or continue
+    #if os.path.exists(dump_path + ".stack"):
+    #    colorful_print('warning', "stack walk already exists! skip.")
+    #    return
 
     # stack walk
-    symbol_path = os.path.join(work_dir, "symbols");
-    stack_walk_cmd = f"{stackwalk_path} {dump_path} {symbol_path} > {dump_path}.stack"
+    stack_walk_cmd = f"{stackwalk_path} {dump_path} {symbol_dir} > {dump_path}.stack"
     subprocess.run(stack_walk_cmd, shell=True)
 
-    stack_walk_cmd = f"{stackwalk_path} {dump_path} {symbol_path} --dump > {dump_path}.raw"
+    stack_walk_cmd = f"{stackwalk_path} {dump_path} {symbol_dir} --dump > {dump_path}.raw"
     subprocess.run(stack_walk_cmd, shell=True)
 
     colorful_print('info', "********************* Recent Stack *********************")
