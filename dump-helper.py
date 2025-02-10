@@ -39,6 +39,9 @@ else:
 # It means current script is a pyinstaller bundle
 if not sys.argv[0].endswith(".py"):
     exec_path = 'res';
+    symbol_dir = os.path.join(os.path.dirname(sys.executable), '.dump_helper_sym')
+else:
+    symbol_dir = os.path.join(os.path.dirname(sys.argv[0]), '.dump_helper_sym')
 
 def get_resource_path(relative_path):
     if getattr(sys, 'frozen', False):
@@ -48,7 +51,6 @@ def get_resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 work_dir = get_resource_path('.')
-symbol_dir = get_resource_path('.dump_helper_sym')
 
 # Check dump_syms
 dump_syms_path = get_resource_path(os.path.join(exec_path, f"dump_syms{exec_postfix}"))
@@ -85,7 +87,7 @@ def dump_syms(so_path):
             colorful_print('error', "dump symbols failed")
             return
         id = lines[0].split()[3]
-        colorful_print('info', f"symbol id: {id}\n")
+        colorful_print('info', f"symbol id: {id}")
 
     # move symbols to symbols folder
     symbols_folder = os.path.join(symbol_dir, os.path.basename(so_path), id)
@@ -93,11 +95,12 @@ def dump_syms(so_path):
         os.makedirs(symbols_folder)
 
     target_sym_path = os.path.join(symbols_folder, os.path.basename(so_path) + ".sym")
-    if os.path.exists(target_sym_path):
-        colorful_print('warning', "symbols already exists! skip.")
-        return
+    #if os.path.exists(target_sym_path):
+    #    colorful_print('warning', "symbols already exists! skip.")
+    #    return
 
     os.rename(f"{so_target_path}.sym", target_sym_path)
+    colorful_print('info', f"symbols saved to {target_sym_path}")
 
 def stack_walk(dump_path):
     if not os.path.exists(dump_path):
