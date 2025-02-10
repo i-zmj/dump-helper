@@ -18,7 +18,7 @@ def colorful_print(level, msg):
 
 colorful_print('info', "********************************************************")
 colorful_print('info', "* Project:   https://gitee.com/izmj/dump_helper        *")
-colorful_print('info', "* Version:   v2.5 (2024-12-24)                         *")
+colorful_print('info', "* Version:   v2.5.1 (2025-02-10)                       *")
 colorful_print('info', "********************************************************")
 
 if sys.platform == "win32":

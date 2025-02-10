@@ -24,7 +24,7 @@
 ### rust-minidump/rust-minidump
 
 Git：https://github.com/rust-minidump/rust-minidump.git 
-> Version 0.22.2 (2024-10-10)
+> Version 0.24.0 (2025-01-03)
 
 ### mozilla/dump_syms
 

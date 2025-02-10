@@ -8,3 +8,4 @@
 *.txt
 *.stack
 *.sym
+.DS_Store
